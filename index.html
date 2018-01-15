@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+ <head>
+ <meta charset="UTF-8">
+ <title>灰度图片检测</title>
+ <style type="text/css">
+ .scream{
+ width:400px;
+ height:300px;
+ position: absolute;
+ top:60px;
+ border: 1px solid;
+ }
+ #canvas{
+ position: absolute;
+ top:60px;
+ left:500px;
+ border: 1px dashed;
+ }
+ </style>
+ </head>
+ <body>
+ <input type="file" onchange="loadImg()"/>
+ <input type="button" value="灰度化" onclick="Convert256toGray()"/>
+ <br/><br/>
+ <div class="scream">
+ <img id="scream" width="400px" height="300px" alt="用一次1块钱" src="img/53abf9b1f0580.png">
+ </div>
+ <canvas id="canvas" width="400px;" height="300px;">
+ your browser does not support canvas!
+ </canvas>
+ <script>
+ 	var isGray=true;//是否为灰度
+ 	var differVal=10;//允许的色差值
+ function Convert256toGray(){
+ var c=document.getElementById("canvas");
+ var ctx=c.getContext("2d");
+ var imgData = ctx.getImageData(0,0,c_w,c_h);
+ isGray=true;
+ for (var i=0;i<imgData.data.length;i+=4)
+  {
+  var R = imgData.data[i]; //R(0-255)
+  var G = imgData.data[i+1]; //G(0-255)
+  var B = imgData.data[i+2]; //G(0-255)
+  var differ=Math.abs(R-G)<=differVal&&Math.abs(R-B)<=differVal&&Math.abs(B-G)<=differVal
+  if(R!=G||R!=B||G!=B){
+  	if(!differ){
+    console.log(R,G,B,differ)
+  	isGray=false
+  		
+  	}
+  	
+  }
+  }
+  console.log(R,G,B)
+  console.log(isGray)
+ ctx.putImageData(imgData,0,0);
+ }
+ </script>
+ <script>
+ //canvas图像的宽高 
+ var c_w = 400; var c_h = 300;
+ //加载img图像
+ function loadImg(){
+ var img = document.getElementById("scream");
+ var file = document.querySelector('input[type=file]').files[0];
+ if(!/image\/\w+/.test(file.type)){
+   alert("文件必须为图片！");
+   return false;
+  }
+ var reader = new FileReader();
+ reader.addEventListener("load", function () {
+  img.src = reader.result;
+ }, false);
+ if(file) {
+  reader.readAsDataURL(file);
+  loadCanvas();
+ }
+ }
+ //加载canvas图像
+ function loadCanvas(){
+ var c=document.getElementById("canvas");
+ var ctx=c.getContext("2d");
+ var img = document.getElementById("scream");
+ img.onload = function() {
+  ctx.drawImage(img,0,0,c_w,c_h);
+ } 
+ }
+ </script>
+ </body>
+</html>
